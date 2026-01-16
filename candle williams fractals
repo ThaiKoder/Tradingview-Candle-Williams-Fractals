@@ -4,6 +4,10 @@ indicator("Candle Williams Fractals", shorttitle="CDL Fractals", format=format.p
 n = input.int(title="Periods", defval=2, minval=2)
 
 
+var float lastHigh = na
+var float lastLow  = na
+
+
 // UpFractal
 bool upflagDownFrontier = true
 bool upflagUpFrontier0 = true
@@ -45,5 +49,29 @@ flagDownFrontier = downflagUpFrontier0 or downflagUpFrontier1 or downflagUpFront
 
 downFractal = (downflagDownFrontier and flagDownFrontier)
 
-plotshape(downFractal, style=shape.triangledown, location=location.belowbar, offset=-n, color=#F44336, size = size.small)
-plotshape(upFractal, style=shape.triangleup,   location=location.abovebar, offset=-n, color=#009688, size = size.small)
+if upFractal
+    string txt = na(lastHigh) ? "H" : close[n] > lastHigh ? "HH" : "LH"
+    label.new(
+        bar_index - n,
+        close[n],
+        txt,
+        style=label.style_label_down,
+        textcolor=color.white,
+        color=txt == "HH" ? color.green : color.red,
+        size=size.small
+    )
+    lastHigh := close[n]
+
+
+if downFractal
+    string txt = na(lastLow) ? "L" : close[n] < lastLow ? "LL" : "HL"
+    label.new(
+        bar_index - n,
+        close[n],
+        txt,
+        style=label.style_label_up,
+        textcolor=color.white,
+        color=txt == "LL" ? color.red : color.green,
+        size=size.small
+    )
+    lastLow := close[n]
