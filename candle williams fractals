@@ -2,6 +2,8 @@
 indicator("Candle Williams Fractals", shorttitle="CDL Fractals", format=format.price, precision=0, overlay=true)
 // Define "n" as the number of periods and keep a minimum value of 2 for error handling.
 n = input.int(title="Periods", defval=2, minval=2)
+useWicksHigh = input.bool(false, title="On Wicks High")
+useWicksLow = input.bool(false, title="On Wicks Low")
 
 
 var float lastHigh = na
@@ -17,13 +19,15 @@ bool upflagUpFrontier3 = true
 bool upflagUpFrontier4 = true
 
 //high
+
+conditionCandleWicksHigh = (useWicksHigh ? high : close)
 for i = 1 to n
-    upflagDownFrontier := upflagDownFrontier and (close[n-i] < close[n])
-    upflagUpFrontier0 := upflagUpFrontier0 and (close[n+i] < close[n])
-    upflagUpFrontier1 := upflagUpFrontier1 and (close[n+1] <= close[n] and close[n+i + 1] < close[n])
-    upflagUpFrontier2 := upflagUpFrontier2 and (close[n+1] <= close[n] and close[n+2] <= close[n] and close[n+i + 2] < close[n])
-    upflagUpFrontier3 := upflagUpFrontier3 and (close[n+1] <= close[n] and close[n+2] <= close[n] and close[n+3] <= close[n] and close[n+i + 3] < close[n])
-    upflagUpFrontier4 := upflagUpFrontier4 and (close[n+1] <= close[n] and close[n+2] <= close[n] and close[n+3] <= close[n] and close[n+4] <= close[n] and close[n+i + 4] < close[n])
+    upflagDownFrontier := upflagDownFrontier and (conditionCandleWicksHigh[n-i] < conditionCandleWicksHigh[n])
+    upflagUpFrontier0 := upflagUpFrontier0 and (conditionCandleWicksHigh[n+i] < conditionCandleWicksHigh[n])
+    upflagUpFrontier1 := upflagUpFrontier1 and (conditionCandleWicksHigh[n+1] <= conditionCandleWicksHigh[n] and conditionCandleWicksHigh[n+i + 1] < conditionCandleWicksHigh[n])
+    upflagUpFrontier2 := upflagUpFrontier2 and (conditionCandleWicksHigh[n+1] <= conditionCandleWicksHigh[n] and conditionCandleWicksHigh[n+2] <= conditionCandleWicksHigh[n] and conditionCandleWicksHigh[n+i + 2] < conditionCandleWicksHigh[n])
+    upflagUpFrontier3 := upflagUpFrontier3 and (conditionCandleWicksHigh[n+1] <= conditionCandleWicksHigh[n] and conditionCandleWicksHigh[n+2] <= conditionCandleWicksHigh[n] and conditionCandleWicksHigh[n+3] <= conditionCandleWicksHigh[n] and conditionCandleWicksHigh[n+i + 3] < conditionCandleWicksHigh[n])
+    upflagUpFrontier4 := upflagUpFrontier4 and (conditionCandleWicksHigh[n+1] <= conditionCandleWicksHigh[n] and conditionCandleWicksHigh[n+2] <= conditionCandleWicksHigh[n] and conditionCandleWicksHigh[n+3] <= conditionCandleWicksHigh[n] and conditionCandleWicksHigh[n+4] <= conditionCandleWicksHigh[n] and conditionCandleWicksHigh[n+i + 4] < conditionCandleWicksHigh[n])
 flagUpFrontier = upflagUpFrontier0 or upflagUpFrontier1 or upflagUpFrontier2 or upflagUpFrontier3 or upflagUpFrontier4
 
 upFractal = (upflagDownFrontier and flagUpFrontier)
@@ -38,22 +42,25 @@ bool downflagUpFrontier3 = true
 bool downflagUpFrontier4 = true
 
 //low
+conditionCandleWicksLow = (useWicksLow ? low : close)
 for i = 1 to n
-    downflagDownFrontier := downflagDownFrontier and (close[n-i] > close[n])
-    downflagUpFrontier0 := downflagUpFrontier0 and (close[n+i] > close[n])
-    downflagUpFrontier1 := downflagUpFrontier1 and (close[n+1] >= close[n] and close[n+i + 1] > close[n])
-    downflagUpFrontier2 := downflagUpFrontier2 and (close[n+1] >= close[n] and close[n+2] >= close[n] and close[n+i + 2] > close[n])
-    downflagUpFrontier3 := downflagUpFrontier3 and (close[n+1] >= close[n] and close[n+2] >= close[n] and close[n+3] >= close[n] and close[n+i + 3] > close[n])
-    downflagUpFrontier4 := downflagUpFrontier4 and (close[n+1] >= close[n] and close[n+2] >= close[n] and close[n+3] >= close[n] and close[n+4] >= close[n] and close[n+i + 4] > close[n])
+    downflagDownFrontier := downflagDownFrontier and (conditionCandleWicksLow[n-i] > conditionCandleWicksLow[n])
+    downflagUpFrontier0 := downflagUpFrontier0 and (conditionCandleWicksLow[n+i] > conditionCandleWicksLow[n])
+    downflagUpFrontier1 := downflagUpFrontier1 and (conditionCandleWicksLow[n+1] >= conditionCandleWicksLow[n] and conditionCandleWicksLow[n+i + 1] > conditionCandleWicksLow[n])
+    downflagUpFrontier2 := downflagUpFrontier2 and (conditionCandleWicksLow[n+1] >= conditionCandleWicksLow[n] and conditionCandleWicksLow[n+2] >= conditionCandleWicksLow[n] and conditionCandleWicksLow[n+i + 2] > conditionCandleWicksLow[n])
+    downflagUpFrontier3 := downflagUpFrontier3 and (conditionCandleWicksLow[n+1] >= conditionCandleWicksLow[n] and conditionCandleWicksLow[n+2] >= conditionCandleWicksLow[n] and conditionCandleWicksLow[n+3] >= conditionCandleWicksLow[n] and conditionCandleWicksLow[n+i + 3] > conditionCandleWicksLow[n])
+    downflagUpFrontier4 := downflagUpFrontier4 and (conditionCandleWicksLow[n+1] >= conditionCandleWicksLow[n] and conditionCandleWicksLow[n+2] >= conditionCandleWicksLow[n] and conditionCandleWicksLow[n+3] >= conditionCandleWicksLow[n] and conditionCandleWicksLow[n+4] >= conditionCandleWicksLow[n] and conditionCandleWicksLow[n+i + 4] > conditionCandleWicksLow[n])
 flagDownFrontier = downflagUpFrontier0 or downflagUpFrontier1 or downflagUpFrontier2 or downflagUpFrontier3 or downflagUpFrontier4
 
 downFractal = (downflagDownFrontier and flagDownFrontier)
+float yPosHigh = close[n] + (high[n] - low[n]) * 0.3  // 30% de la taille de la bougie au-dessus
+float yPosLow = close[n] - (high[n] - low[n]) * 0.3  // 30% de la taille de la bougie au-dessus
 
 if upFractal
     string txt = na(lastHigh) ? "H" : close[n] > lastHigh ? "HH" : "LH"
     label.new(
         bar_index - n,
-        close[n],
+        yPosHigh,
         txt,
         style=label.style_label_down,
         textcolor=color.white,
@@ -67,7 +74,7 @@ if downFractal
     string txt = na(lastLow) ? "L" : close[n] < lastLow ? "LL" : "HL"
     label.new(
         bar_index - n,
-        close[n],
+        yPosLow,
         txt,
         style=label.style_label_up,
         textcolor=color.white,
